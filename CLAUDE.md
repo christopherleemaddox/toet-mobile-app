@@ -29,6 +29,9 @@ This folder was consolidated on 2026-08-06 from two places that had drifted apar
 
 **Standing rule — this is mandatory, not optional:** any session that changes the UI in `Live Build/index.html` (adds, removes, renames, or restructures a screen or component) must update `App Blueprint/TOET-Blueprint.html` to match, in the same session, before considering the change done. This is not yet an automated pipeline — there's no script that regenerates the Blueprint from the app's code by itself. Right now it's a manual step Claude is required to do every time. If Christopher wants true automatic regeneration later, that's a separate, larger build (parsing the live HTML and generating the Blueprint's screen/code map programmatically) — worth its own conversation, not assumed.
 
+## Reading Live Build or App Blueprint's real source
+Both are exported from an AI app-builder as a "DC-runtime" bundled HTML file — the actual content is compressed/encoded, not plain text, so grepping for copy or component names comes back empty even though it's there. Use the **`read-dc-bundle`** skill (`.claude/skills/read-dc-bundle/`) instead of re-deriving this from scratch — it took a full investigation to figure out the file format the first time (2026-08-06); it should be a two-minute lookup every time after.
+
 ## Working here
 - Edits to `Live Build/index.html` affect something Christopher relies on daily — treat it as production code, not a draft.
 - Card copy (the "truth" line, prayers) goes through the built-in Humalingo skill before it ships — this is exactly the kind of short, emotionally-loaded copy that reads as AI-written if it isn't deliberately humanized.
