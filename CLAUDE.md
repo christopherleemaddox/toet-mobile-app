@@ -36,4 +36,5 @@ This folder was consolidated on 2026-08-06 from two places that had drifted apar
 
 ## Decided, don't re-litigate
 - Netlify password gate on bibletruthcards.netlify.app: intentional, confirmed by Christopher (2026-08-06). Leave it on.
-- `Archive/TOET Original APP (full predecessor build)/` vs `Legacy Art (ChatGPT Prototype)/`: keep both as-is. Christopher only cares about `Legacy Art/` (the images); no consolidation needed.
+- `Archive/TOET Original APP (full predecessor build)/` vs `Legacy Art (ChatGPT Prototype)/`: Christopher only wanted the art. The full predecessor-code copy was deleted (moved to ~/.Trash, 2026-08-06) — `Legacy Art/` is the only surviving copy of that earlier build, images only.
+- GitHub push is working (fixed via Personal Access Token, 2026-08-06). All commits are live at github.com/christopherleemaddox/toet-mobile-app, `main` in sync with `origin/main`.
