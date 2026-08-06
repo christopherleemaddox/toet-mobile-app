@@ -16,7 +16,13 @@ This folder was consolidated on 2026-08-06 from two places that had drifted apar
   - `TOET Original APP (full predecessor build)/` — a complete earlier working version (real `index.html`, manual backup copies, full image library). More complete than `Legacy Art/` above — if the two ever need reconciling, this is the fuller one.
   - `Master Build TOET (old manual snapshots)/` — two different zip snapshots from before "Live Build," made by hand instead of with git. Superseded now that git tracks history going forward.
   - `Current TOET Chat (source of Live Build)/` — the original download `Live Build/` was extracted from. Kept as the paper trail.
-  - `TOET-Blueprint/` — a bundled HTML page, not yet reviewed in detail.
+
+## `App Blueprint/` — the shared vocabulary for this app (mandatory, keep in sync)
+`App Blueprint/TOET-Blueprint.html` is an interactive, click-to-label map of every screen in the app. Open it, pick a screen tab (Onboarding, Today, Browse, Reader, Kept, Prayers, Settings, Circle, Sending, Recap, Account, Sheets & Popups), click any element, and it shows a short code (e.g. `T8`) and a plain-English name (e.g. "Daily Word Card") in the bottom bar. This is how Christopher refers to specific UI pieces in chat — "fix T8" or "fix the Daily Word Card" — instead of describing them from scratch every time. Treat this as the naming authority for this app's UI.
+
+**Known gap, flag until fixed:** this file is dated 2026-08-01; `Live Build/` is from 2026-08-02 or later. The Blueprint has not been regenerated since, so some codes/names may not match the current build exactly. Whoever next makes a UI change to `Live Build/` should verify the Blueprint still matches before relying on it, and update it if not.
+
+**Standing rule — this is mandatory, not optional:** any session that changes the UI in `Live Build/index.html` (adds, removes, renames, or restructures a screen or component) must update `App Blueprint/TOET-Blueprint.html` to match, in the same session, before considering the change done. This is not yet an automated pipeline — there's no script that regenerates the Blueprint from the app's code by itself. Right now it's a manual step Claude is required to do every time. If Christopher wants true automatic regeneration later, that's a separate, larger build (parsing the live HTML and generating the Blueprint's screen/code map programmatically) — worth its own conversation, not assumed.
 
 ## Working here
 - Edits to `Live Build/index.html` affect something Christopher relies on daily — treat it as production code, not a draft.
@@ -25,7 +31,9 @@ This folder was consolidated on 2026-08-06 from two places that had drifted apar
 - This folder is a git repo (initialized 2026-08-06, remote at `github.com/christopherleemaddox/toet-mobile-app`). `Legacy Art/` and `Archive/` are intentionally excluded — only `Live Build/`, `Alternate Design (Unshipped)/`, and this file are tracked.
 
 ## Open questions to raise with Christopher, not assume
-- Is the Netlify password gate on bibletruthcards.netlify.app intentional?
-- What's actually inside `Archive/TOET-Blueprint/` — hasn't been reviewed yet.
-- Whether `Archive/TOET Original APP (full predecessor build)/` should eventually replace `Legacy Art (ChatGPT Prototype)/` since it's more complete, or whether both stay.
 - Long-term tech stack: stay single-file PWA, or move toward an app-store-distributed app eventually?
+- Whether Christopher wants a real automated Blueprint-regeneration pipeline built at some point, versus the current mandatory-manual-update rule.
+
+## Decided, don't re-litigate
+- Netlify password gate on bibletruthcards.netlify.app: intentional, confirmed by Christopher (2026-08-06). Leave it on.
+- `Archive/TOET Original APP (full predecessor build)/` vs `Legacy Art (ChatGPT Prototype)/`: keep both as-is. Christopher only cares about `Legacy Art/` (the images); no consolidation needed.
