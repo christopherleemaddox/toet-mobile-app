@@ -59,6 +59,12 @@ open(SRC, 'w', encoding='utf-8').write(new_raw)
 
 **The one gotcha that will silently break the file:** the original encoder escapes every literal `</` in the content to `/` (e.g. `</script>`), specifically so a real `</script>` occurring naturally inside the template's own nested `<script>` tags can't prematurely terminate the *outer* `<script type="__bundler/template">` tag when the browser's HTML parser scans the raw file. `json.dumps()` does not do this by default — it leaves `/` alone. Skipping the `.replace('</', '<\\u002F')` step produces a file that looks fine in a text editor and even round-trips through `json.loads()` correctly in isolation, but fails at runtime in an actual browser with `Bundle unpack error: Unterminated string in JSON` (because the HTML parser cut the script tag short before the JS ever got a chance to JSON.parse it). If you ever see that exact error after an edit, this is almost certainly why.
 
+**A separate trap specific to `<head>` content:** the loader replaces the *entire* `<html>` element with the decoded template once its JS runs (look for `document.documentElement.replaceWith(...)` in the outer shell) — so there are actually two different `<head>`s in the raw file, serving two different audiences:
+- The **outer** shell's `<head>` (plain, unescaped HTML near the top of the raw file, editable directly with the normal Edit tool — no JSON dance needed) is all a non-JS client ever sees. This is what search engines and social-media link-preview crawlers (Facebook, Twitter, iMessage, Slack) actually read, since none of them execute JavaScript before scraping `<title>`/OG tags.
+- The **inner** template's `<head>` (inside the compressed `__bundler/template` JSON string) is what becomes the *real*, final DOM after the swap — this is what a live user's browser tab title reflects. `document.title` reads empty after the swap if the inner template has no `<title>` of its own, even if the outer shell had one.
+
+If a fix needs to reach real users' browser chrome (tab title) **and** external crawlers (link previews), it has to go in **both** places — confirmed by checking `document.title` in a real browser both before and after the swap, not just by reading the raw file's text.
+
 **Verification checklist before trusting an edit:**
 1. `cut()`'s assertions already guarantee each anchor matched exactly once — don't skip them for "obviously unique" text.
 2. After all edits, grep the decoded string for anything that should no longer exist (leftover state keys, handler names) — should be empty.
