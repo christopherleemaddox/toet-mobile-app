@@ -103,6 +103,17 @@ The check is saved as the **`verify-kjv`** skill (`.claude/skills/verify-kjv/`) 
 
 **What this does NOT cover:** whether a card's `truth` affirmation is a sound application of its verse in context. That is a theological judgment, not a string comparison, and needs a pastor or elder to review a sample. Flagged as the single highest-consequence unchecked risk in the app, since a misapplied verse damages brand trust permanently in a way a design flaw does not.
 
+## Card repetition audit — clean (2026-08-07)
+Second half of the content audit, companion to the Scripture check above. Hand-built card libraries usually repeat themselves as they grow; this one does not. **Zero duplicate `truth` lines and zero duplicate `prayer` lines across all 1,841 cards.** The highest genuine similarity between any two cards anywhere is 0.689 for truths and 0.788 for prayers, both comfortably below duplicate territory. Saved as the **`audit-card-content`** skill so it can be re-run as cards are added.
+
+Same discipline as the KJV check: a clean result was proven, not assumed. The detector has a built-in negative control that plants an exact copy and a lightly-reworded copy of a real card; both were caught (1.000 and 0.957).
+
+**Repeated verse text turned out not to be a defect.** Four groups of cards share verse wording, but every single one is a genuinely different Scripture reference whose wording the Bible itself repeats (Psalm 42:5 vs 42:11, Matthew 25:21 vs 25:23, Psalm 107:1 vs 1 Chronicles 16:34 vs Psalm 136:1, Lamentations 3:22 vs 3:22-23), and each card's truth and prayer take a different angle. Worth remembering on future runs before "fixing" something that isn't broken.
+
+**One genuine collision, Christopher's call:** cards #372 and #1187 are both in the **Gratitude** topic with near-identical verse text. Different references and different writing, but someone browsing Gratitude meets the same words twice. Every other overlap spans two different topics, so it is unlikely to be hit in one sitting. Options are to move #1187 to another topic (its truth leans on it being the oldest chorus in Israel's songbook, so Worship or Praise fits), swap its verse, or accept it as legitimately two different references.
+
+**Structural note, deliberately not treated as a defect:** 100% of prayers end "Amen.", 86% open with "Lord," or "Father,", and 99.6% are two or three sentences. That reads as formula on a spreadsheet but addressing God and closing with Amen is what prayer *is*, and liturgical repetition is a feature rather than an AI tell. The middle of each prayer genuinely varies, which is the part that matters. Flagged here mainly so a future session doesn't "discover" it and try to fix it.
+
 ## Reading Live Build or App Blueprint's real source
 Both are exported from an AI app-builder as a "DC-runtime" bundled HTML file — the actual content is compressed/encoded, not plain text, so grepping for copy or component names comes back empty even though it's there. Use the **`read-dc-bundle`** skill (`.claude/skills/read-dc-bundle/`) instead of re-deriving this from scratch — it took a full investigation to figure out the file format the first time (2026-08-06); it should be a two-minute lookup every time after.
 
