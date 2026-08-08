@@ -94,6 +94,15 @@ Christopher asked for a comparison against the daily-devotional / Bible-verse ap
 
 **Bottom line if this gets picked back up:** audio is the single feature most likely to matter if Christopher ever wants to compete more directly with the category leaders. Habit/streak mechanics would be the second thing to consider. Neither is started — this section is findings only, not a plan.
 
+## Scripture accuracy — verified, not assumed (2026-08-07)
+The brand rule is that quoted Scripture is word-for-word. That was previously a promise resting on trust; it is now checked. **All 1,841 cards were verified against a public-domain KJV corpus (66 JSON files, `github.com/aruljohn/Bible-kjv`): 1,841 exact matches, 0 wording differences, 0 reference errors.** Both things were checked, not just one: the `verse` text matches the KJV exactly (after normalizing curly quotes and whitespace), and every `ref` points at a real book/chapter/verse that genuinely contains that text. Multi-verse refs (e.g. `Philippians 4:6-7`) are joined and compared as a unit.
+
+The check is saved as the **`verify-kjv`** skill (`.claude/skills/verify-kjv/`) so it is re-runnable, since cards will be added over time. The 5MB KJV corpus is deliberately not committed (keeps the repo lean) — the skill documents how to re-download it, and doing so needs Christopher's OK like any download.
+
+**A clean 100% pass was treated as suspicious and proven, not accepted.** The checker was run against deliberately corrupted copies first, and correctly caught a single-word swap (`hath` → `has`), a dropped clause, a valid-but-wrong reference, and a nonexistent reference. Worth repeating that discipline on any future run: a broken comparison and a perfect result look identical from the outside. (One injected "fault" during that test was a no-op — it replaced a word that wasn't in that verse — which briefly looked like a checker miss and wasn't. Check that the corruption actually corrupted something.)
+
+**What this does NOT cover:** whether a card's `truth` affirmation is a sound application of its verse in context. That is a theological judgment, not a string comparison, and needs a pastor or elder to review a sample. Flagged as the single highest-consequence unchecked risk in the app, since a misapplied verse damages brand trust permanently in a way a design flaw does not.
+
 ## Reading Live Build or App Blueprint's real source
 Both are exported from an AI app-builder as a "DC-runtime" bundled HTML file — the actual content is compressed/encoded, not plain text, so grepping for copy or component names comes back empty even though it's there. Use the **`read-dc-bundle`** skill (`.claude/skills/read-dc-bundle/`) instead of re-deriving this from scratch — it took a full investigation to figure out the file format the first time (2026-08-06); it should be a two-minute lookup every time after.
 
