@@ -12,7 +12,7 @@ It verifies two things for all cards:
 1. The `verse` text matches the KJV exactly (after normalizing curly quotes and whitespace).
 2. The `ref` points at a real book/chapter/verse that actually contains that text.
 
-Last full run: **2026-08-07, 1,841 / 1,841 exact, 0 reference errors.**
+Last full run: **2026-08-07, 1,861 / 1,861 exact, 0 reference errors.**
 
 ## Running it
 

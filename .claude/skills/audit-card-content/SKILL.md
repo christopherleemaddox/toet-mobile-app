@@ -12,7 +12,9 @@ This finds that before a user does.
 Companion to the `verify-kjv` skill: that one checks Scripture is *accurate*, this one
 checks the surrounding writing is *varied*.
 
-Last full run: **2026-08-07, 1,841 cards. Zero duplicate truths, zero duplicate prayers.**
+Last full run: **2026-08-07, 1,861 cards. Zero duplicate truths, zero duplicate prayers.**
+
+**Point this at the file you actually changed.** `find_dupes.py` has the live app path baked in. When auditing a modified copy, edit that path first, then confirm the printed `cards: N` matches the count you expect. A clean pass against the wrong file already happened once.
 
 ## Running it
 
