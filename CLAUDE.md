@@ -49,6 +49,27 @@ This folder was consolidated on 2026-08-06 from two places that had drifted apar
 
 **Hosted for real use at toet-blueprints.netlify.app/mobile-app-blueprint.html.** An iCloud Drive copy was tried first (2026-08-07) so Christopher could open it offline via the Files app — didn't work, because tapping a file there opens an iOS Quick Look preview that blocks JavaScript, so the entire (JS-generated) UI just showed blank. The hosted site is the actual answer: real Safari page, full click-to-highlight working, confirmed end-to-end. A raw copy still lives in iCloud Drive at `TOET Blueprints/TOET Mobile App Blueprint.html` as backup only — point Christopher to the hosted URL, not that file, when he wants to use it. Whenever this Blueprint changes, update both: the iCloud copy (checksum-verified) and the hosted site (redeploy `TOET Projects/TOET Blueprints/`), same session, same mandatory-sync standard.
 
+## Competitive research (2026-08-07) — for reference, nothing acted on yet
+Christopher asked for a comparison against the daily-devotional / Bible-verse app category, via Tavily research — explicitly research-only, no changes made to the app from this. Revisit when he's ready to decide what (if anything) to act on.
+
+**Apps researched:** YouVersion, Glorify, Pray.com, Abide, Dwell, First5, Our Daily Bread, She Reads Truth.
+
+**Where this app already compares favorably:**
+- **Privacy** — no account, no tracking, nothing ever leaves the device. Genuinely uncommon: Dwell's own Play Store listing admits it collects personal/financial data, unencrypted.
+- **No paywall** — Abide, Glorify, and Pray.com all gate real content behind subscriptions; this app gives everyone everything, free, permanently (see "No premium tier" above). Real goodwill differentiator, though it means no built-in revenue path — a separate, later conversation.
+- **The personalized "truth" line** — verse + an affirmation written in the user's own voice/name. Nothing in the research showed a competitor pairing content this way.
+- **Reading-mode flexibility** — scroll/story/swipe/tabs for reading a single card. Competitors mostly offer one fixed format.
+- **Accessibility** — the research couldn't even find evidence competitors document accessibility work at all, let alone the level just shipped here (real keyboard buttons, measured WCAG contrast).
+
+**Where the category is ahead of this app:**
+- **Audio — the biggest gap.** Dwell is entirely audio-first (narrator selection, looping, a "Reflect" pause feature). Abide is guided meditation audio. First5 has dramatized audio. Pray.com has done 100M+ podcast downloads. This app has no audio anywhere.
+- **Habit/streak tracking.** YouVersion's core growth engine is a visible daily-streak counter. This app has "Draw Another" and a daily word, but nothing that visibly rewards returning tomorrow.
+- **Scale of structured content.** YouVersion has multi-day reading *plans*; this app is single-card daily encouragement — a different product shape, not strictly a gap, but worth naming so it doesn't read as a miss.
+
+**On visual design specifically:** the research came back thin — most competitors don't publish real design specs, and nothing suggested an industry-standard palette being missed. The current warm cream/gold palette is a coherent, defensible choice on its own; nothing found here says it needs to change.
+
+**Bottom line if this gets picked back up:** audio is the single feature most likely to matter if Christopher ever wants to compete more directly with the category leaders. Habit/streak mechanics would be the second thing to consider. Neither is started — this section is findings only, not a plan.
+
 ## Reading Live Build or App Blueprint's real source
 Both are exported from an AI app-builder as a "DC-runtime" bundled HTML file — the actual content is compressed/encoded, not plain text, so grepping for copy or component names comes back empty even though it's there. Use the **`read-dc-bundle`** skill (`.claude/skills/read-dc-bundle/`) instead of re-deriving this from scratch — it took a full investigation to figure out the file format the first time (2026-08-06); it should be a two-minute lookup every time after.
 
