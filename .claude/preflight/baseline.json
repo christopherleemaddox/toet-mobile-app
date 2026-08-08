@@ -1,0 +1,16 @@
+{
+  "_readme": "Expected shape of the app. preflight.py compares against this instead of hardcoding numbers, so a real change (adding cards, adding a topic) is a deliberate edit here in the same commit, not a silent drift. If preflight reports a count mismatch and the change was intentional, update the number here and say so in the commit message.",
+  "cards": 1861,
+  "topics": 93,
+  "_must_contain_readme": "Features that must never silently vanish from the template. Each value is a literal string preflight looks for in the decoded template. Add an entry whenever something is shipped that would be quietly catastrophic to lose.",
+  "must_contain": {
+    "crisis help screen": "If you need help right now",
+    "crisis 988 call link": "tel:988",
+    "crisis text line link": "sms:741741",
+    "crisis reader entry line": "heavier than a hard day",
+    "crisis settings row": "IF YOU NEED HELP",
+    "privacy screen": "Your Privacy",
+    "data export": "Export my data",
+    "read aloud": "readAloud"
+  }
+}

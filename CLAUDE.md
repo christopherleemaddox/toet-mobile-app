@@ -175,6 +175,18 @@ Christopher asked for tools that could audit the app and recommend visual, flow,
 ## Reading Live Build or App Blueprint's real source
 Both are exported from an AI app-builder as a "DC-runtime" bundled HTML file — the actual content is compressed/encoded, not plain text, so grepping for copy or component names comes back empty even though it's there. Use the **`read-dc-bundle`** skill (`.claude/skills/read-dc-bundle/`) instead of re-deriving this from scratch — it took a full investigation to figure out the file format the first time (2026-08-06); it should be a two-minute lookup every time after.
 
+## Automatic checking (added 2026-08-08) — a hook, not a habit
+Before this, nothing checked Claude's work automatically. There were three manual skills that had to be remembered, and a list of past mistakes in Christopher's global CLAUDE.md that only helped if it was read. Both halves are now covered:
+
+- **`.claude/preflight/preflight.py`** — 23 checks over both bundled files: the template decodes, its `</` escaping is intact, card and topic counts match `baseline.json`, no em dashes or straight apostrophes in card copy, every prayer ends "Amen.", named features (the crisis screen, its links, Privacy, export, read-aloud) are still present, and the Blueprint has no duplicate codes, no orphaned legend entries or regions, and still carries its self-check. Run any time with `python3 .claude/preflight/preflight.py --all`.
+- **`.claude/preflight/hook.py`** — registered as a `PostToolUse` hook in `Claude Projects/.claude/settings.local.json` on `Write|Edit|Bash`. It fires automatically, decides for itself whether the tool call touched anything relevant, and exits 0 silently otherwise. **It watches Bash too, deliberately**: in practice these files get replaced with `cp` from a scratchpad, so a hook matching only Write/Edit would have sat there silently through every real change ever made to this app. A failure exits 2, which surfaces as a blocking error Claude cannot ignore.
+- **`.claude/preflight/selftest.py`** — plants ten specific defects one at a time and asserts each is caught. **Run this after any change to `preflight.py`.** It has already earned its place: on the first run it proved the `</`-escaping check did not exist, because `json.loads` accepts the unescaped form happily and only the browser's HTML parser rejects it.
+- **`.claude/skills/edit-app-safely/`** — the method half, which no file inspection can cover: anchor uniqueness, print-what-you-read, planted controls, testing the negative case, the two opposite escaping traps, and JS-driven browser verification.
+
+**`baseline.json` holds the expected counts on purpose.** When cards or topics change legitimately, update the baseline in the same commit. That turns growth into a deliberate two-line change instead of a number nobody notices drifting.
+
+**Building preflight surfaced a live bug in itself, which is the point.** Its first version found the card asset by searching for `window.CARDS` and picked a 10KB helper that merely mentions it, instead of the 784KB file that defines it. It reported an error rather than a false pass only because it printed which asset it had read. Any checker added here must print what it actually examined.
+
 ## Working here
 - Edits to `Live Build/index.html` affect something Christopher relies on daily — treat it as production code, not a draft.
 - Card copy (the "truth" line, prayers) goes through the built-in Humalingo skill before it ships — this is exactly the kind of short, emotionally-loaded copy that reads as AI-written if it isn't deliberately humanized.
