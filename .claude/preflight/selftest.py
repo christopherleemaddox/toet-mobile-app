@@ -90,13 +90,14 @@ CASES = [
      'no clickable region'),
     ('Blueprint self-check banner removed', BP,
      lambda r: edit_template(r, lambda t: t.replace('hasClash', 'hasNothing')), 'self-check'),
-    ('Coming Soon gate loses its onboarded check (would lock out real users)', LIVE,
-     lambda r: edit_template(r, lambda t: once(t, 'comingSoonOpen:!S.onboarded&&!S.testerUnlocked',
-                                                 'comingSoonOpen:!S.testerUnlocked')),
-     'onboarded'),
     ('Sage theme palette deleted from pal()', LIVE,
      lambda r: edit_template(r, lambda t: once(t, "sage:{bg:'#1b2620',bg2:'#212d26',ink:'#e8eee3',ink2:'#a9bfa8',ink3:'#8fa68d',line:'#3c4c40',gold:'#adc59e',gold2:'#a3bf93',panel:'#28362e'},\n", '')),
      'Sage/Warm Stone/Sky'),
+    ('Coming Soon gate reverts to the resettable onboarded/testerUnlocked pair '
+     '(would recreate the Start-over lockout bug found on Christopher\'s phone 2026-08-08)', LIVE,
+     lambda r: edit_template(r, lambda t: once(t, 'comingSoonOpen:!S.everAccessed,',
+                                                 'comingSoonOpen:!S.onboarded&&!S.testerUnlocked,')),
+     'everAccessed'),
 ]
 
 
