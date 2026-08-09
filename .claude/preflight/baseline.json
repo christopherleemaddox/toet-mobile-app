@@ -13,6 +13,7 @@
     "data export": "Export my data",
     "read aloud": "readAloud",
     "inbound link waits for CARDS before resolving": "_resolveInbound",
-    "new-user Keep queues the shared card as their first word and pre-fills its topic": "_pendingInboundCard"
+    "new-user Keep queues the shared card as their first word and pre-fills its topic": "_pendingInboundCard",
+    "S7 avatar zoom floor is 1.2, not 1 (guarantees pan room in both directions)": "Math.max(1.2,Math.min(4,"
   }
 }
