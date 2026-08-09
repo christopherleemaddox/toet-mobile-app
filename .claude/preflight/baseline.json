@@ -21,9 +21,8 @@
     "Coming Soon screen has a manual code-entry box (survives Add to Home Screen, which cannot carry the ?tester= URL)": "csUnlock:()=>{",
     "Christopher's private owner code works alongside the shared tester code, independent of it": "v==='trustgod2026!#'",
     "recap share includes the site link, not just an image": "See it here: '+location.origin+location.pathname",
-    "Sage/Warm Stone/Sky theme palettes present in pal()": "sage:{bg:'#1b2620',bg2:'#212d26'",
-    "theme picker offers all 6 themes": "['sage','Sage'],['stone','Warm Stone'],['sky','Sky']",
+    "theme picker offers exactly Light, Evening, Auto (Sage/Warm Stone/Sky removed 2026-08-08)": "const themeOptions=mkOpts([['light','Light'],['dark','Evening'],['auto','Auto']]",
     "theme caption is dynamic per-theme, not a hardcoded string": "const themeCaption=(",
-    "Appearance row summary names the real theme, not just light/dark": "{dark:'Evening Ink',sage:'Sage',stone:'Warm Stone',sky:'Sky'}[S.theme]"
+    "chrome-paint background reads the real theme's pal().bg, not a hardcoded light/dark literal (the white-block fix)": "this.sharePal().bg:this.pal().bg;"
   }
 }
