@@ -186,6 +186,8 @@ Christopher flagged this directly from a screenshot on his own phone: "You've wa
 
 Verified by seeding real `saved`/`savedMeta` data (two Praise-topic cards dated this month) to genuinely trigger the memory line's own `memCnt[topic]>=2` condition, not by faking the rendered text — confirmed clean and evenly spaced in both light and dark theme. Zero console errors.
 
+**Confirmed on Christopher's own phone, same day.**
+
 ## Fixed: S7 (avatar drag-to-fit circle) couldn't pan in one direction, and zoom felt dead (2026-08-08)
 Christopher asked to double-check S7's actual behavior, not just take it on faith. Traced it all the way to the CSS: the photo is sized to "cover" the 150px circle — meaning exactly one axis is scaled to sit flush with the container (zero slack) while the other overflows to fill the rest. That's inherent to cover-fit, not a formula bug: for a portrait photo (the common case for a phone selfie) the width sits flush at 1x zoom, so dragging left/right updates `avatar.px` correctly but produces **zero visible movement** — there's no image left to reveal. Vertical drag worked fine, matching exactly what Christopher reported ("only up and down"). The same root cause explains the zoom complaint: zooming in *does* work correctly (verified — at 150% zoom the same horizontal drag moved the photo for real), but the low end of the range feels dead because one axis has nothing to show for it until you've zoomed in enough for both directions to have overflow.
 
