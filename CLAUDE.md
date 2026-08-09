@@ -188,6 +188,8 @@ Christopher asked to double-check S7's actual behavior, not just take it on fait
 
 **Not touched, flagged as lower priority:** `av.ar` (aspect ratio) is computed eagerly in `avFile` for every freshly-picked photo — that path was already correct. There's a separate, defensive fallback in `avDragStart` that computes `ar` lazily on first touch, which only matters for an avatar saved before the `ar` field existed. Left alone since it doesn't affect any current real user flow.
 
+**Confirmed on Christopher's own phone, real touch and pinch, same day.** The browser-tool verification above was synthetic PointerEvents, not real fingers — this was the one thing that couldn't be tested in-session. Real touch confirmed working.
+
 ## "Keep this word close" now actually keeps something, for a first-time recipient (2026-08-08)
 Follow-up to the fix above, once the reveal itself was confirmed working. For a brand-new recipient (never onboarded), the two buttons on the inbound reveal — "Keep this word close" and "Not now" — did the exact same thing: close the sheet, start ordinary onboarding, retain nothing. The "keep" promise kept nothing.
 
