@@ -12,6 +12,7 @@
     "privacy screen": "Your Privacy",
     "data export": "Export my data",
     "read aloud": "readAloud",
-    "inbound link waits for CARDS before resolving": "_resolveInbound"
+    "inbound link waits for CARDS before resolving": "_resolveInbound",
+    "new-user Keep queues the shared card as their first word and pre-fills its topic": "_pendingInboundCard"
   }
 }

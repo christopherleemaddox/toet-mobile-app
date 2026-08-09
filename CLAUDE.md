@@ -179,6 +179,20 @@ Discovered mid-session: `git push` was rejected because `origin/main` had two co
 
 **The actual resolution path:** abort the merge (`git merge --abort`), confirm your own fix's anchor strings are still unique in `origin/main`'s version of the file (they will be, unless the other session touched the exact same function), decode `origin/main`'s real file, re-run your own fix script against *that* as the new base, verify with preflight and a live browser check that both changes coexist, then finish the merge with `git merge -s ours origin/main` followed by `git commit --amend` with the real reconciled file staged. This produces a normal two-parent merge commit with correct, verified content — not a blind pick of "theirs" or "mine."
 
+## "Keep this word close" now actually keeps something, for a first-time recipient (2026-08-08)
+Follow-up to the fix above, once the reveal itself was confirmed working. For a brand-new recipient (never onboarded), the two buttons on the inbound reveal — "Keep this word close" and "Not now" — did the exact same thing: close the sheet, start ordinary onboarding, retain nothing. The "keep" promise kept nothing.
+
+**Christopher's call, combining three options discussed together:** tapping "Keep this word close" as a new user now does all three at once —
+1. the card's topic is pre-checked in the onboarding topic picker (`obTopics`), so their first real choice in the app already reflects what a friend sent them, not a blank slate;
+2. that exact card — not a generic topic pick — becomes their post-onboarding first-word reveal, reusing the `firstWord` mechanism `finishOb()` already had for a normal new user;
+3. the card is silently added to Kept once onboarding completes, with the same "Kept close ♥" toast `toggleSave` already uses elsewhere — so by the time they see it as their first word, it's already saved, not just shown once and gone.
+
+"Not now" is untouched — still a clean skip, nothing retained, nothing pre-filled. That contrast is what makes "Keep" mean something now.
+
+**Mechanism:** `ibDo`'s new-user branch stashes the card on the instance (`this._pendingInboundCard`) rather than in state, since it only needs to survive from one tap to the end of the same onboarding flow, not a reload — consistent with how the rest of onboarding already works (nothing else survives an abandoned session either). `finishOb()` reads and clears it in one line at the top, so it can never be reused stale on a later "edit my topics" pass.
+
+**Verified, all four paths, via the real DOM buttons and the real `finishOb`/`ibDo`, not by calling them directly:** new user + Keep (topic pre-filled, firstWord is the sent card, saved silently, pending cleared afterward) · new user + Not now (nothing retained — the negative case that proves the two buttons actually differ now) · existing user + Keep (unchanged: saves + jumps to Kept tab) · existing user + Not now (untouched code path, not re-tested). Zero console errors throughout.
+
 ## Fixed: shared-link "X sent you a word" reveal could silently never show (2026-08-08)
 Found while building a preview of the share-link flow for Christopher. The reveal screen itself (kicker "X SENT YOU A WORD", the card, "♡ Keep this word close") was always correct — the bug was in whether it ever got *triggered*.
 
