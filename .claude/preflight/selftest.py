@@ -102,6 +102,11 @@ CASES = [
      '(the only unlock path that survives Add to Home Screen)', LIVE,
      lambda r: edit_template(r, lambda t: once(t, 'csUnlock:()=>{', 'csGone:()=>{')),
      'csUnlock'),
+    ("Christopher's private owner code deleted from isValidCode "
+     '(would lock him out again with no independent way back in)', LIVE,
+     lambda r: edit_template(r, lambda t: once(
+         t, "v==='toet2026'||v==='trustgod2026!#'", "v==='toet2026'")),
+     'trustgod2026'),
 ]
 
 
