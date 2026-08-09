@@ -18,6 +18,7 @@
     "S17 Your Year label is wrapped in its own span (fixes flex whitespace collapse)": "<span>Your {{ recapYear }} with the Word</span>",
     "Coming Soon gate keys off the durable everAccessed flag, not the resettable onboarded/testerUnlocked pair": "comingSoonOpen:!S.everAccessed,",
     "Start over does not clear everAccessed (this is what stops it from re-triggering the gate)": "if(!localStorage.getItem('toet.everAccessed')&&localStorage.getItem('toet.onboarded')){localStorage.setItem('toet.everAccessed','1')}",
+    "Coming Soon screen has a manual code-entry box (survives Add to Home Screen, which cannot carry the ?tester= URL)": "csUnlock:()=>{",
     "recap share includes the site link, not just an image": "See it here: '+location.origin+location.pathname",
     "Sage/Warm Stone/Sky theme palettes present in pal()": "sage:{bg:'#1b2620',bg2:'#212d26'",
     "theme picker offers all 6 themes": "['sage','Sage'],['stone','Warm Stone'],['sky','Sky']",

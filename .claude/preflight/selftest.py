@@ -98,6 +98,10 @@ CASES = [
      lambda r: edit_template(r, lambda t: once(t, 'comingSoonOpen:!S.everAccessed,',
                                                  'comingSoonOpen:!S.onboarded&&!S.testerUnlocked,')),
      'everAccessed'),
+    ('Coming Soon manual code-entry handler removed '
+     '(the only unlock path that survives Add to Home Screen)', LIVE,
+     lambda r: edit_template(r, lambda t: once(t, 'csUnlock:()=>{', 'csGone:()=>{')),
+     'csUnlock'),
 ]
 
 
