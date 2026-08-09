@@ -101,6 +101,13 @@ CASES = [
      lambda r: edit_template(r, lambda t: once(
          t, "const cc=document.getElementById('chromecap');if(cc)cc.style.background=bb;\n", '')),
      'chromecap'),
+    ('theme change reintroduces a full-page location.reload() '
+     '(the actual root cause behind every white-flash report today, confirmed via a real button tap with a reload canary)', LIVE,
+     lambda r: edit_template(r, lambda t: once(
+         t, "this.setState(o);this.ls('toet.prefs',prefs)};",
+         "const themeChanged=('theme' in o)&&o.theme!==S.theme;this.setState(o);this.ls('toet.prefs',prefs);"
+         "if(themeChanged){setTimeout(()=>{try{location.reload()}catch(e){}},650)}};")),
+     'reload'),
     ('Coming Soon gate reverts to the resettable onboarded/testerUnlocked pair '
      '(would recreate the Start-over lockout bug found on Christopher\'s phone 2026-08-08)', LIVE,
      lambda r: edit_template(r, lambda t: once(t, 'comingSoonOpen:!S.everAccessed,',
