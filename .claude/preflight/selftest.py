@@ -90,6 +90,10 @@ CASES = [
      'no clickable region'),
     ('Blueprint self-check banner removed', BP,
      lambda r: edit_template(r, lambda t: t.replace('hasClash', 'hasNothing')), 'self-check'),
+    ('Coming Soon gate loses its onboarded check (would lock out real users)', LIVE,
+     lambda r: edit_template(r, lambda t: once(t, 'comingSoonOpen:!S.onboarded&&!S.testerUnlocked',
+                                                 'comingSoonOpen:!S.testerUnlocked')),
+     'onboarded'),
 ]
 
 
