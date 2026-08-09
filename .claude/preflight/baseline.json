@@ -17,6 +17,10 @@
     "S7 avatar zoom floor is 1.2, not 1 (guarantees pan room in both directions)": "Math.max(1.2,Math.min(4,",
     "S17 Your Year label is wrapped in its own span (fixes flex whitespace collapse)": "<span>Your {{ recapYear }} with the Word</span>",
     "Coming Soon gate never fires for an already-onboarded user": "comingSoonOpen:!S.onboarded&&!S.testerUnlocked",
-    "recap share includes the site link, not just an image": "See it here: '+location.origin+location.pathname"
+    "recap share includes the site link, not just an image": "See it here: '+location.origin+location.pathname",
+    "Sage/Warm Stone/Sky theme palettes present in pal()": "sage:{bg:'#1b2620',bg2:'#212d26'",
+    "theme picker offers all 6 themes": "['sage','Sage'],['stone','Warm Stone'],['sky','Sky']",
+    "theme caption is dynamic per-theme, not a hardcoded string": "const themeCaption=(",
+    "Appearance row summary names the real theme, not just light/dark": "{dark:'Evening Ink',sage:'Sage',stone:'Warm Stone',sky:'Sky'}[S.theme]"
   }
 }

@@ -94,6 +94,9 @@ CASES = [
      lambda r: edit_template(r, lambda t: once(t, 'comingSoonOpen:!S.onboarded&&!S.testerUnlocked',
                                                  'comingSoonOpen:!S.testerUnlocked')),
      'onboarded'),
+    ('Sage theme palette deleted from pal()', LIVE,
+     lambda r: edit_template(r, lambda t: once(t, "sage:{bg:'#1b2620',bg2:'#212d26',ink:'#e8eee3',ink2:'#a9bfa8',ink3:'#8fa68d',line:'#3c4c40',gold:'#adc59e',gold2:'#a3bf93',panel:'#28362e'},\n", '')),
+     'Sage/Warm Stone/Sky'),
 ]
 
 
