@@ -25,6 +25,7 @@
     "theme caption is dynamic per-theme, not a hardcoded string": "const themeCaption=(",
     "chrome-paint background reads the real theme's pal().bg, not a hardcoded light/dark literal (the white-block fix)": "this.sharePal().bg:this.pal().bg;",
     "the top safe-area strip (#chromecap) is covered by the same immediate+retry chrome paint as body/documentElement, not left to React's render alone": "document.getElementById('chromecap');if(cc)cc.style.background=bb;",
-    "theme switching updates in place, no full-page reload (the real cause of every white-flash report)": "this.setState(o);this.ls('toet.prefs',prefs)};"
+    "theme switching updates in place, no full-page reload (the real cause of every white-flash report)": "this.setState(o);this.ls('toet.prefs',prefs)};",
+    "chromecap has no CSS transition on background, so it snaps instantly on theme switch instead of visibly fading for 300ms (found 2026-08-09: this, not the missing retry paint, was the actual flash)": "id=\"chromecap\" style=\"position:fixed;top:0;left:0;right:0;height:env(safe-area-inset-top);background:{{ chromeCap }};z-index:80;pointer-events:none\">"
   }
 }

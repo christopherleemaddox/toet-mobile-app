@@ -122,6 +122,15 @@ CASES = [
      lambda r: edit_template(r, lambda t: once(
          t, "v==='toet2026'||v==='trustgod2026!#'", "v==='toet2026'")),
      'trustgod2026'),
+    ('chromecap CSS transition reintroduced '
+     '(would recreate the top-strip fade — the actual flash cause found 2026-08-09, '
+     'which the earlier "defensive repaint" fix could never have stopped since a forced '
+     'style write on a transitioning element still animates)', LIVE,
+     lambda r: edit_template(r, lambda t: once(
+         t,
+         'id="chromecap" style="position:fixed;top:0;left:0;right:0;height:env(safe-area-inset-top);background:{{ chromeCap }};z-index:80;pointer-events:none">',
+         'id="chromecap" style="position:fixed;top:0;left:0;right:0;height:env(safe-area-inset-top);background:{{ chromeCap }};z-index:80;pointer-events:none;transition:background .3s">')),
+     'chromecap'),
 ]
 
 
