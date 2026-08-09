@@ -188,6 +188,8 @@ Christopher spotted this from a screenshot of his own phone. Looked like a missi
 
 **Verified live before touching source** (per the project's "do real test debugging, not hypothesis" rule): reproduced the bug, then tested the fix by wrapping the live DOM in a span via JS and confirming `innerText` came back correct, before writing the actual source edit. After shipping: `innerText` reads `"Your 2026 with the Word"` cleanly in the real file, in both light and dark theme, and the row's click-to-open-Recap behavior still works (`recapOpen` still flips to `true`) — confirming the DOM restructuring didn't disturb the click binding. Zero console errors.
 
+**Confirmed on Christopher's own phone, same day.**
+
 ## Fixed: T6's memory line was crowded and hard to read (2026-08-08)
 Christopher flagged this directly from a screenshot on his own phone: "You've walked with Praise 2 times this month." (the small italic line under the greeting) looked cramped. Root cause: it was set in Cormorant Garamond — the app's delicate display serif, used everywhere else at 15px and up, mostly 17-19px+ for real body text, up to 54px for showcase numbers — at just 13.5px. That's the smallest italic-serif usage anywhere in the app by a wide margin, and display serifs don't hold up at caption size, especially italicized.
 
