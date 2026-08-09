@@ -23,6 +23,7 @@
     "recap share includes the site link, not just an image": "See it here: '+location.origin+location.pathname",
     "theme picker offers exactly Light, Evening, Auto (Sage/Warm Stone/Sky removed 2026-08-08)": "const themeOptions=mkOpts([['light','Light'],['dark','Evening'],['auto','Auto']]",
     "theme caption is dynamic per-theme, not a hardcoded string": "const themeCaption=(",
-    "chrome-paint background reads the real theme's pal().bg, not a hardcoded light/dark literal (the white-block fix)": "this.sharePal().bg:this.pal().bg;"
+    "chrome-paint background reads the real theme's pal().bg, not a hardcoded light/dark literal (the white-block fix)": "this.sharePal().bg:this.pal().bg;",
+    "the top safe-area strip (#chromecap) is covered by the same immediate+retry chrome paint as body/documentElement, not left to React's render alone": "document.getElementById('chromecap');if(cc)cc.style.background=bb;"
   }
 }
