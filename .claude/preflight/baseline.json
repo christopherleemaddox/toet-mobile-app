@@ -11,6 +11,7 @@
     "crisis settings row": "IF YOU NEED HELP",
     "privacy screen": "Your Privacy",
     "data export": "Export my data",
-    "read aloud": "readAloud"
+    "read aloud": "readAloud",
+    "inbound link waits for CARDS before resolving": "_resolveInbound"
   }
 }

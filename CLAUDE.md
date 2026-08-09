@@ -172,6 +172,15 @@ Christopher asked for tools that could audit the app and recommend visual, flow,
 
 **On what Claude can do in-session:** render the app at phone size in both themes, screenshot it, compute contrast, rewrite microcopy, propose card designs, then make the change and look again. No external tool closes that loop. What it cannot do is judge whether a prayer lands for someone at 2am.
 
+## Fixed: shared-link "X sent you a word" reveal could silently never show (2026-08-08)
+Found while building a preview of the share-link flow for Christopher. The reveal screen itself (kicker "X SENT YOU A WORD", the card, "♡ Keep this word close") was always correct — the bug was in whether it ever got *triggered*.
+
+**Root cause:** `componentDidMount` parsed the `#w=<id>~<name>` link hash and called `CARDS.find(...)` **synchronously**, before `window.CARDS` was guaranteed loaded. `pickDaily()`/`fulfillRequests()`, a few lines later in the same method, already guard against exactly this with `if(window.CARDS){...}else{poll every 80ms}` — the inbound-link handler never got the same treatment. On a slow load, `CARDS.find` would silently fail to find the card (or throw, caught by an empty `catch(e){}`), the hash got cleared via `history.replaceState` regardless, and the recipient landed on the ordinary Today screen with no error and no second chance — the link had already been consumed.
+
+**Fix:** the hash is still parsed and cleared from the URL immediately (no dependency on CARDS for that part), but the actual `CARDS.find` + `setState({inbound:...})` + Circle-bookkeeping logic is now deferred into `this._resolveInbound()`, called from the *same* `window.CARDS` ready-check that already covers `pickDaily`/`fulfillRequests` — one mechanism, not a second poller.
+
+**Verification, and its real limit:** the reveal was confirmed rendering correctly with live data (screenshot, real card, real kicker), and the new `_resolveInbound` mechanism was confirmed to resolve correctly when invoked. What could **not** be verified in this environment: a genuine end-to-end cold load with the link's hash present from the very first script execution. Two separate limitations of the local browser-preview tool blocked it — see the Process Lessons entry in the global CLAUDE.md dated 2026-08-08 (`location.reload()` doesn't actually re-execute scripts here; `navigate()` strips `#` fragments from local `file://` URLs). **This needs a real device with a real `https://` link to be fully confirmed** — the same test already queued up with Christopher for the original bug report (text the link to a friend, or open it in a private tab).
+
 ## Reading Live Build or App Blueprint's real source
 Both are exported from an AI app-builder as a "DC-runtime" bundled HTML file — the actual content is compressed/encoded, not plain text, so grepping for copy or component names comes back empty even though it's there. Use the **`read-dc-bundle`** skill (`.claude/skills/read-dc-bundle/`) instead of re-deriving this from scratch — it took a full investigation to figure out the file format the first time (2026-08-06); it should be a two-minute lookup every time after.
 
