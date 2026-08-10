@@ -26,6 +26,14 @@
     "chrome-paint background reads the real theme's pal().bg, not a hardcoded light/dark literal (the white-block fix)": "this.sharePal().bg:this.pal().bg;",
     "the top safe-area strip (#chromecap) is covered by the same immediate+retry chrome paint as body/documentElement, not left to React's render alone": "document.getElementById('chromecap');if(cc)cc.style.background=bb;",
     "theme switching updates in place, no full-page reload (the real cause of every white-flash report)": "this.setState(o);this.ls('toet.prefs',prefs)};",
-    "chromecap has no CSS transition on background, so it snaps instantly on theme switch instead of visibly fading for 300ms (found 2026-08-09: this, not the missing retry paint, was the actual flash)": "id=\"chromecap\" style=\"position:fixed;top:0;left:0;right:0;height:env(safe-area-inset-top);background:{{ chromeCap }};z-index:80;pointer-events:none\">"
+    "chromecap has no CSS transition on background, so it snaps instantly on theme switch instead of visibly fading for 300ms (found 2026-08-09: this, not the missing retry paint, was the actual flash)": "id=\"chromecap\" style=\"position:fixed;top:0;left:0;right:0;height:env(safe-area-inset-top);background:{{ chromeCap }};z-index:80;pointer-events:none\">",
+    "App Lock gate requires everAccessed AND the feature enabled AND not session-unlocked (2026-08-10)": "lockScreenOpen:S.everAccessed&&LK.enabled&&!S.sessionUnlocked,",
+    "App Lock hashing uses PBKDF2-SHA256 via crypto.subtle, never a plaintext PIN/pattern": "name:'PBKDF2'",
+    "App Lock escalating lockout schedule (5/10/15/20+ fails -> 30s/2min/5min/15min)": "lockoutDurationFor(n){if(n<5)return 0;if(n<10)return 30000;if(n<15)return 120000;if(n<20)return 300000;return 900000}",
+    "Pattern grid SVG has the aspect-ratio:1/1 fix (prevents the known 0x0 dot-hit-detection bug that bit both prior ports)": "aspect-ratio:1/1;touch-action:none",
+    "App Lock Settings row present": "APP LOCK</span>",
+    "floating Lock now button present on every tab": "aria-label=\"Lock now\"",
+    "Turn off fully clears salt/hash/method back to null, not just enabled:false": "enabled:false,method:null,salt:null,hash:null,iterations:300000,failedAttempts:0,lockoutUntil:0}",
+    "App Lock re-locks on visibilitychange and pagehide": "if(document.hidden)this.relock()"
   }
 }

@@ -131,6 +131,12 @@ CASES = [
          'id="chromecap" style="position:fixed;top:0;left:0;right:0;height:env(safe-area-inset-top);background:{{ chromeCap }};z-index:80;pointer-events:none">',
          'id="chromecap" style="position:fixed;top:0;left:0;right:0;height:env(safe-area-inset-top);background:{{ chromeCap }};z-index:80;pointer-events:none;transition:background .3s">')),
      'chromecap'),
+    ('App Lock gate silently disabled (would show the app to a locked-out session '
+     'instead of the lock screen — the single highest-consequence regression this feature could have)', LIVE,
+     lambda r: edit_template(r, lambda t: once(
+         t, 'lockScreenOpen:S.everAccessed&&LK.enabled&&!S.sessionUnlocked,',
+         'lockScreenOpen:false,')),
+     'lockscreenopen'),
 ]
 
 
