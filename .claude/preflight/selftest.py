@@ -144,6 +144,12 @@ CASES = [
          t, ';margin-top:10px">Daily Scripture Cards</div>',
          ';margin-top:10px">Bible Mobile Cards</div>')),
      'daily scripture'),
+    ('status bar reverted to the opaque "default" style (would bring back the OS '
+     'status-bar flash on theme switch — Phase 1 fix ported from Memory App 2026-08-31)', LIVE,
+     lambda r: edit_template(r, lambda t: t.replace(
+         'apple-mobile-web-app-status-bar-style" content="black-translucent"',
+         'apple-mobile-web-app-status-bar-style" content="default"')),
+     'black-translucent'),
 ]
 
 
