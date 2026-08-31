@@ -34,6 +34,7 @@
     "App Lock Settings row present": "APP LOCK</span>",
     "floating Lock now button present on every tab": "aria-label=\"Lock now\"",
     "Turn off fully clears salt/hash/method back to null, not just enabled:false": "enabled:false,method:null,salt:null,hash:null,iterations:300000,failedAttempts:0,lockoutUntil:0}",
-    "App Lock re-locks on visibilitychange and pagehide": "if(document.hidden)this.relock()"
+    "App Lock re-locks on visibilitychange and pagehide": "if(document.hidden)this.relock()",
+    "brand leads as the name; the wordmark tagline is a plain descriptor, not the pseudo-name \"Bible Mobile Cards\" (App Store collision risk with the existing \"Bible Cards\" app, renamed 2026-08-31)": ";margin-top:10px\">Daily Scripture Cards</div>"
   }
 }

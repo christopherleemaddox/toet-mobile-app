@@ -137,6 +137,13 @@ CASES = [
          t, 'lockScreenOpen:S.everAccessed&&LK.enabled&&!S.sessionUnlocked,',
          'lockScreenOpen:false,')),
      'lockscreenopen'),
+    ('brand naming regressed — the wordmark tagline reverted to the pseudo-name '
+     '"Bible Mobile Cards" (collides with the existing "Bible Cards" App Store app; '
+     'renamed to a plain descriptor 2026-08-31)', LIVE,
+     lambda r: edit_template(r, lambda t: once(
+         t, ';margin-top:10px">Daily Scripture Cards</div>',
+         ';margin-top:10px">Bible Mobile Cards</div>')),
+     'daily scripture'),
 ]
 
 
