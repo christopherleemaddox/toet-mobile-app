@@ -541,3 +541,19 @@ The load-time inline scripts do `document.documentElement.style.background = c` 
 **Verified in-browser, the exact failing scenario:** launch seeded to `theme:'dark'`, toggle to Light -> `document.documentElement.style.background` flips to `rgb(250,246,238)` cream **synchronously** on the click; toggle back -> flips to dark synchronously. Both directions. Zero console errors, no visual regression. preflight 55 checks + selftest 27 cases green (new guard + planted-defect case for the `<html>` sync; the Phase 2 `_paintChrome` guard description updated).
 
 **This is the one with a directly-observed root cause and a directly-observed fix**, unlike Phases 1/4/5 which were reasoned. Committed + pushed to `main`. Christopher: delete + re-add the Home Screen icon, then — importantly — test the scenario that was failing: open the app, make sure it's on Evening, then switch to Light and watch the top.
+
+### Phase 7 — status bar back to `black-translucent`; the fresh-launch test was decisive (2026-08-31)
+
+Christopher's test: **launch the app already on Light -> status bar cream and correct. Launch on Evening, then toggle to Light in-app -> status bar stays black.**
+
+That is `default` (set in Phase 4). With `default`, iOS draws its own opaque status bar and colours it **once at launch** from the page/`theme-color` at that moment; it does not re-read runtime changes. So a fresh Light launch is fine, but launch-in-Evening-then-toggle leaves the OS bar stuck on the dark colour it grabbed at launch. No web-side change (Phases 5 `#chromecap`, 6 `<html>`, `theme-color` sync) can move it.
+
+Memory App has no such problem because it uses **`black-translucent`** — iOS draws no opaque bar, the web content shows through, it always follows the theme. Phase 4 abandoned `black-translucent` on the strength of a black bar that was actually `#chromecap` rendering dark (fixed Phase 5) and `<html>` frozen dark (fixed Phase 6). With those two gone, `black-translucent` is safe to return to.
+
+**Phase 7 reverts ONLY Phase 4's status-bar-style edit** (`default` -> `black-translucent`, 3 spots). Phase 4's other change — the single static `theme-color` tag plus its synchronous update — stays (harmless under `black-translucent`). Phases 5 and 6 stay.
+
+Net theme-fix stack now live: Phase 2 (CSS `:root`/`:root.dark` + `html,body{background:var(--bg)}`), Phase 3 (synchronous `.dark` class flip in `savePrefs`), Phase 5 (`#chromecap` painted by flat `.dark`-keyed rules + synchronous inline, no var), Phase 6 (`<html>` inline background synced), Phase 7 (`black-translucent`). Phases 1 and 4 were dead ends, both now reverted.
+
+**Verified in-browser** (launch dark -> toggle light): status-bar meta `black-translucent` x2, `theme-color` `#12141c`->`#faf6ee`, `<html>` inline dark->cream, body/`#chromecap` cream, `.dark` class off. Zero console errors. preflight 55 + selftest 27 green (Phase 4 status-bar guard/case flipped to assert `black-translucent`).
+
+**Christopher — the test that matters now:** delete + re-add the icon, open the app, set it to Evening, then toggle to Light and watch the top. This is the scenario that was stuck. If the status-bar text is hard to read on the cream background in Light (black-translucent forces light text), say so — that is the known tradeoff he accepted, and Memory App lives with it.

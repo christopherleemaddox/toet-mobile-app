@@ -165,12 +165,13 @@ CASES = [
          t, ';margin-top:10px">Daily Scripture Cards</div>',
          ';margin-top:10px">Bible Mobile Cards</div>')),
      'daily scripture'),
-    ('status bar set back to black-translucent (Phase 1, reverted in Phase 4 — it '
-     'left a persistent black status strip in light mode on the phone)', LIVE,
+    ('status bar set to "default" (Phase 4, wrong — the OS bar then colours once at '
+     'launch and never follows an in-app theme toggle; Phase 7 put it back to '
+     'black-translucent)', LIVE,
      lambda r: edit_template(r, lambda t: t.replace(
-         'apple-mobile-web-app-status-bar-style" content="default"',
-         'apple-mobile-web-app-status-bar-style" content="black-translucent"')),
-     'opaque "default" style'),
+         'apple-mobile-web-app-status-bar-style" content="black-translucent"',
+         'apple-mobile-web-app-status-bar-style" content="default"')),
+     'status bar is black-translucent'),
     ('theme-color meta no longer updated synchronously in savePrefs (the OS status '
      'bar colour would lag or mismatch the in-app theme on toggle, Phase 4 2026-08-31)', LIVE,
      lambda r: edit_template(r, lambda t: once(
