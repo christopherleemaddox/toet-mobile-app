@@ -96,12 +96,20 @@ CASES = [
          t, "this.sharePal().bg:this.pal().bg;",
          "this.sharePal().bg:(this.isDark()?'#12141c':'#faf6ee');")),
      'pal().bg'),
-    ('_paintChrome stops writing #chromecap altogether (loses the recap/sending '
-     'sharePal tint — the retry churn was removed in Phase 2 2026-08-31, but the '
-     'one chromecap write must stay)', LIVE,
+    ('_paintChrome writes #chromecap unconditionally again (a permanent inline hex '
+     'that overrides the CSS var(--bg) rule after any recap open/close -> the '
+     'one-frame colour lag on theme toggle comes back, Phase 3 2026-08-31)', LIVE,
      lambda r: edit_template(r, lambda t: once(
-         t, " const cc=document.getElementById('chromecap');if(cc)cc.style.background=bb; }", " }")),
-     'chromecap'),
+         t, "cc.style.background=(this.state.recapOpen||this.state.sendingOpen)?bb:''",
+         "cc.style.background=bb")),
+     'recapopen||this.state.sendingopen'),
+    ('theme change no longer flips the .dark class synchronously in savePrefs '
+     '(class flip falls back to componentDidUpdate = one frame late -> the top '
+     'strip holds the previous theme colour for a frame, Phase 3 2026-08-31)', LIVE,
+     lambda r: edit_template(r, lambda t: once(
+         t, "if('theme'in o){const nd=o.theme==='dark'||(o.theme==='auto'&&S.sysDark);document.documentElement.classList.toggle('dark',nd)}",
+         "")),
+     "flips the .dark class synchronously"),
     ('theme change reintroduces a full-page location.reload() '
      '(the actual root cause behind every white-flash report today, confirmed via a real button tap with a reload canary)', LIVE,
      lambda r: edit_template(r, lambda t: once(
@@ -129,8 +137,8 @@ CASES = [
      'style write on a transitioning element still animates)', LIVE,
      lambda r: edit_template(r, lambda t: once(
          t,
-         'id="chromecap" style="position:fixed;top:0;left:0;right:0;height:env(safe-area-inset-top);background:{{ chromeCap }};z-index:80;pointer-events:none">',
-         'id="chromecap" style="position:fixed;top:0;left:0;right:0;height:env(safe-area-inset-top);background:{{ chromeCap }};z-index:80;pointer-events:none;transition:background .3s">')),
+         'id="chromecap" style="position:fixed;top:0;left:0;right:0;height:env(safe-area-inset-top);z-index:80;pointer-events:none">',
+         'id="chromecap" style="position:fixed;top:0;left:0;right:0;height:env(safe-area-inset-top);z-index:80;pointer-events:none;transition:background .3s">')),
      'chromecap'),
     ('App Lock gate silently disabled (would show the app to a locked-out session '
      'instead of the lock screen — the single highest-consequence regression this feature could have)', LIVE,

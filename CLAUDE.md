@@ -473,3 +473,21 @@ Theme switch is now: flip one class on `<html>` -> `:root.dark` swaps `--bg` -> 
 **Verified locally** (reload per theme, not the in-app toggle which hangs the tool): light / dark / auto all resolve correctly, `<html>.dark` present exactly when dark, `--bg` / body / `#chromecap` all follow, `#om-theme-bg` no longer uses `!important`, shell transition gone, zero console errors, no visual regression either theme. Preflight 52 checks + selftest 23 cases green — 4 new `must_contain` guards (`:root.dark` block, `html,body` var(--bg), the gutted `_paintChrome` signature, the `#chromecap` var fallback), 3 new planted-defect cases, and the obsolete 2026-08-08 "chromecap retry-paint" case + its stale baseline guard were retired/rewritten to match.
 
 **As with every prior round, the browser cannot show the flash** — the real test is Christopher deleting and re-adding the Home Screen icon and toggling Light <-> Evening while watching the top strip, ideally with a slow-motion screen recording. Committed + pushed to `main`; deployed content not verifiable from here (password gate). If this misses, the screen recording is mandatory before a seventh attempt.
+
+### Phase 3 — the flash flipped from white to a stale-colour lag; fixed by a synchronous class flip (2026-08-31)
+
+Christopher tested Phase 2 on his phone: **the white is gone.** What was left was reversed — switching *to* light, the top strip briefly held the previous (dark) colour before catching up. A one-frame colour lag on one element, not a paint gap.
+
+**Why:** Phase 2 made the whole screen flip via the `.dark` class, but the class was toggled inside `_paintChrome`, which runs in `componentDidUpdate` — one frame *after* React paints the new theme. So for that frame, everything keyed on `var(--bg)` (now including `html,body` and the new `#chromecap{background:var(--bg)}` rule) still had the old colour. The shell wrapper updates with React's paint; the `var(--bg)` layer updated a frame later. Reversed, smaller version of the same lag.
+
+**Fix (what Memory App actually does — flips `data-theme` synchronously in the click handler, before anything else):**
+1. `savePrefs` now does `document.documentElement.classList.toggle('dark',nd)` **synchronously, before `setState`**, whenever `theme` is in the patch. Confirmed in-browser via a real button click (this time the tool did not hang): `document.documentElement.classList.contains('dark')` flips in the same synchronous tick as the click, both directions, with `#chromecap` and `body` staying in lockstep.
+2. `_mqFn` does the same synchronous flip when `theme==='auto'` and the system scheme changes.
+3. `#chromecap` lost its inline `background:{{ chromeCap }}` React binding entirely — its colour now comes only from the Phase 2 CSS rule `#chromecap{background:var(--bg)}`, which re-resolves in the same style recalc as `body` when the class flips.
+4. `_paintChrome` forces `#chromecap`'s inline colour **only while a recap/sending overlay is open** (its `sharePal()` tint, which `var(--bg)` can't express); otherwise it sets `cc.style.background=''` so the CSS rule wins. Without this, any recap open/close would leave a permanent inline hex on `#chromecap` and the lag would come back on the next toggle.
+
+The `{{ chromeCap }}` binding in `renderVals()` (line ~446) is now dead but left in place (harmless, one less structural edit).
+
+**Verified:** preflight 53 checks + selftest 24 cases green — the Phase 2 `_paintChrome`/`#chromecap` guards and the two pre-existing 2026-08-08/09 chromecap selftest cases were rewritten to the Phase 3 element/method strings; 2 new guards (`savePrefs` synchronous flip, `_paintChrome` recap-only inline) and 2 new planted-defect cases added. In-browser both directions: class flips synchronously on click, `#chromecap` computed background comes from `var(--bg)` with an empty inline style, `#chromecap` and `body` end on the same colour, zero console errors, no visual regression. Committed + pushed to `main`.
+
+**Still Christopher's phone to confirm** — same test (delete + re-add Home Screen icon, toggle Light <-> Evening, watch the top). Phase 2 already removed the white; Phase 3 should remove the residual colour lag. A slow-motion recording if any hint of it remains.
