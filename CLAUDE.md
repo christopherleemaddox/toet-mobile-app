@@ -509,3 +509,20 @@ This is a single `setAttribute` per tag per toggle, in the same synchronous tick
 **Verified in-browser both directions:** status-bar meta is `default` everywhere, `black-translucent` gone; both theme-color tags flip synchronously on click and track the in-app theme; `.dark` class + `#chromecap` var(--bg) still working from Phases 2/3; body and `#chromecap` end on the same colour; zero console errors; no visual regression. preflight 54 checks + selftest 25 cases green — the Phase 1 status-bar guard/case were rewritten to assert `default` (and that a revert to `black-translucent` is caught), plus a guard + case for the synchronous theme-color update.
 
 **Christopher's phone, next:** delete + re-add the Home Screen icon, toggle Light <-> Evening watching the very top. The persistent black bar should be gone (it was 100% `black-translucent`). If any residual flash on the toggle itself remains, the slow-motion screen recording is the required next step.
+
+### Phase 5 — the black bar is #chromecap rendering dark in light mode (screenshot-confirmed) (2026-08-31)
+
+Christopher sent two screenshots. Dark mode: the top is seamless. Light mode: a distinct black band exactly `env(safe-area-inset-top)` tall, with the clock/battery on it, above a crisp line where the cream app starts. That band is the `#chromecap` element. Its background was `var(--bg,#faf6ee)` (Phase 2), and on his device that variable resolves to the **dark** value in light mode and stays — a CSS custom-property inheritance quirk I cannot reproduce or inspect from here (in the browser `env(safe-area-inset-top)` is 0, so `#chromecap` has no visible height and `getComputedStyle` always read it correct).
+
+Both `black-translucent` (Phases 1-3) and `default` (Phase 4) status-bar styles showed the same black band, which confirms it is the web element, not the OS status bar — the status-bar-style meta cannot colour a `<div>`.
+
+**Fix — take `#chromecap` off `var(--bg)` entirely, three independent non-var paths, all saying the same flat hex:**
+1. CSS: `#chromecap{background:var(--bg,#faf6ee)}` -> `#chromecap{background:#faf6ee}` + `:root.dark #chromecap{background:#12141c}`. Flat, keyed on the `.dark` class on `<html>` (which flips synchronously, Phase 3). No variable, no inheritance chain.
+2. `_paintChrome`: sets `#chromecap`'s inline background to `dk?'#12141c':'#faf6ee'` (was `''`), or the `sharePal()` tint during recap/sending.
+3. `savePrefs` and `_mqFn`: set `#chromecap`'s inline background to the same flat hex **synchronously**, in the same tick as the `.dark` class flip, before any render (skipped while a recap/sending overlay is up so its tint is preserved).
+
+Whatever made `var(--bg)` resolve dark for that one element in light mode, none of these three touch `var(--bg)`.
+
+**Verified in-browser both directions:** `#chromecap` inline background is the correct flat hex synchronously on click (cream in light, `#12141c` in dark), computed style matches, no console errors, no visual regression. preflight 54 checks + selftest 26 cases green (Phase 3/4 chromecap + theme-color guards/cases rewritten to the Phase 5 strings; new guard + selftest case that a revert to `var(--bg)` is caught).
+
+**Diagnostic value if this still shows black on Christopher's phone:** it would mean the black band is NOT `#chromecap` (its background is now a flat hex from three paths) — it would have to be the OS drawing its own status bar, and the fix would be to delete `#chromecap` and pad the top content into the safe area the way Memory App does. Committed + pushed to `main`.
