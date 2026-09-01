@@ -107,7 +107,7 @@ CASES = [
      '(class flip falls back to componentDidUpdate = one frame late -> the top '
      'strip holds the previous theme colour for a frame, Phase 3 2026-08-31)', LIVE,
      lambda r: edit_template(r, lambda t: once(
-         t, "if('theme'in o){const nd=o.theme==='dark'||(o.theme==='auto'&&S.sysDark);document.documentElement.classList.toggle('dark',nd)}",
+         t, "if('theme'in o){const nd=o.theme==='dark'||(o.theme==='auto'&&S.sysDark);document.documentElement.classList.toggle('dark',nd);document.querySelectorAll('meta[name=\"theme-color\"]').forEach(x=>x.setAttribute('content',nd?'#12141c':'#faf6ee'))}",
          "")),
      "flips the .dark class synchronously"),
     ('theme change reintroduces a full-page location.reload() '
@@ -153,12 +153,18 @@ CASES = [
          t, ';margin-top:10px">Daily Scripture Cards</div>',
          ';margin-top:10px">Bible Mobile Cards</div>')),
      'daily scripture'),
-    ('status bar reverted to the opaque "default" style (would bring back the OS '
-     'status-bar flash on theme switch — Phase 1 fix ported from Memory App 2026-08-31)', LIVE,
+    ('status bar set back to black-translucent (Phase 1, reverted in Phase 4 — it '
+     'left a persistent black status strip in light mode on the phone)', LIVE,
      lambda r: edit_template(r, lambda t: t.replace(
-         'apple-mobile-web-app-status-bar-style" content="black-translucent"',
-         'apple-mobile-web-app-status-bar-style" content="default"')),
-     'black-translucent'),
+         'apple-mobile-web-app-status-bar-style" content="default"',
+         'apple-mobile-web-app-status-bar-style" content="black-translucent"')),
+     'opaque "default" style'),
+    ('theme-color meta no longer updated synchronously in savePrefs (the OS status '
+     'bar colour would lag or mismatch the in-app theme on toggle, Phase 4 2026-08-31)', LIVE,
+     lambda r: edit_template(r, lambda t: once(
+         t, ";document.querySelectorAll('meta[name=\"theme-color\"]').forEach(x=>x.setAttribute('content',nd?'#12141c':'#faf6ee'))}",
+         "}")),
+     'updated synchronously in savePrefs'),
     ('theming: :root.dark CSS palette block removed (dark theme would fall back to '
      'the light :root vars — Phase 2 flash fix 2026-08-31)', LIVE,
      lambda r: edit_template(r, lambda t: once(

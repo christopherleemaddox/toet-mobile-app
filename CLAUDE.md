@@ -491,3 +491,21 @@ The `{{ chromeCap }}` binding in `renderVals()` (line ~446) is now dead but left
 **Verified:** preflight 53 checks + selftest 24 cases green — the Phase 2 `_paintChrome`/`#chromecap` guards and the two pre-existing 2026-08-08/09 chromecap selftest cases were rewritten to the Phase 3 element/method strings; 2 new guards (`savePrefs` synchronous flip, `_paintChrome` recap-only inline) and 2 new planted-defect cases added. In-browser both directions: class flips synchronously on click, `#chromecap` computed background comes from `var(--bg)` with an empty inline style, `#chromecap` and `body` end on the same colour, zero console errors, no visual regression. Committed + pushed to `main`.
 
 **Still Christopher's phone to confirm** — same test (delete + re-add Home Screen icon, toggle Light <-> Evening, watch the top). Phase 2 already removed the white; Phase 3 should remove the residual colour lag. A slow-motion recording if any hint of it remains.
+
+### Phase 4 — reverted Phase 1 (black-translucent); it was the persistent black status strip (2026-08-31)
+
+Christopher tested Phase 3 on his phone: **auto/evening fine, but switching to Light left a black bar at the very top (clock/battery area) that STAYS** — not a flash, a persistent state, and only in light mode.
+
+That is exactly `apple-mobile-web-app-status-bar-style: black-translucent` (Phase 1). It forces white status-bar text and a dark status region: invisible in dark mode (matches), a black bar on cream in light mode. Phase 1 was a guess that never fixed the original white flash anyway — Phases 2 and 3 fixed the real mechanism (no `<style>` rebuild churn, synchronous `.dark` class flip). So `default` is safe to bring back now, and it gives an opaque status bar that follows the page colour with auto-contrast dark text.
+
+**Changes to `Live Build/index.html`:**
+1. `apple-mobile-web-app-status-bar-style`: `black-translucent` -> `default`, all 3 spots (outer shell, inner `<head>`, inner `<helmet>`).
+2. The `<meta name="theme-color">` media-query pair (light `#faf6ee` / dark `#12141c`, keyed on the *system* scheme) collapsed to a single plain `<meta name="theme-color" content="#faf6ee">` in each of the 3 spots.
+3. `savePrefs` now also does `document.querySelectorAll('meta[name="theme-color"]').forEach(...)` **synchronously**, alongside the `.dark` class flip, setting every theme-color tag to `#12141c` / `#faf6ee` to match the in-app theme (not the system scheme). `querySelectorAll`/`forEach`, not `querySelector` — the runtime keeps two theme-color tags live (inner `<head>` + hoisted `<helmet>`), and a first draft with `querySelector` only updated one, verified in-browser.
+4. `_mqFn` does the same when `theme==='auto'` and the system scheme changes.
+
+This is a single `setAttribute` per tag per toggle, in the same synchronous tick as the class flip — not the `<style>`-rebuild + 200/800ms-retry churn that caused the original flash (that stays gone).
+
+**Verified in-browser both directions:** status-bar meta is `default` everywhere, `black-translucent` gone; both theme-color tags flip synchronously on click and track the in-app theme; `.dark` class + `#chromecap` var(--bg) still working from Phases 2/3; body and `#chromecap` end on the same colour; zero console errors; no visual regression. preflight 54 checks + selftest 25 cases green — the Phase 1 status-bar guard/case were rewritten to assert `default` (and that a revert to `black-translucent` is caught), plus a guard + case for the synchronous theme-color update.
+
+**Christopher's phone, next:** delete + re-add the Home Screen icon, toggle Light <-> Evening watching the very top. The persistent black bar should be gone (it was 100% `black-translucent`). If any residual flash on the toggle itself remains, the slow-motion screen recording is the required next step.
