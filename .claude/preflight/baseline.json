@@ -24,7 +24,7 @@
     "theme picker offers exactly Light, Evening, Auto (Sage/Warm Stone/Sky removed 2026-08-08)": "const themeOptions=mkOpts([['light','Light'],['dark','Evening'],['auto','Auto']]",
     "theme caption is dynamic per-theme, not a hardcoded string": "const themeCaption=(",
     "chrome-paint background reads the real theme's pal().bg, not a hardcoded light/dark literal (the white-block fix)": "this.sharePal().bg:this.pal().bg;",
-    "the top safe-area strip (#chromecap) is covered by the same immediate+retry chrome paint as body/documentElement, not left to React's render alone": "document.getElementById('chromecap');if(cc)cc.style.background=bb;",
+    "_paintChrome still writes #chromecap's background once per theme change (covers the recap/sending sharePal tint that the CSS var(--bg) fallback can't; the 200/800ms retry churn was removed in Phase 2, 2026-08-31)": "document.getElementById('chromecap');if(cc)cc.style.background=bb;",
     "theme switching updates in place, no full-page reload (the real cause of every white-flash report)": "this.setState(o);this.ls('toet.prefs',prefs)};",
     "chromecap has no CSS transition on background, so it snaps instantly on theme switch instead of visibly fading for 300ms (found 2026-08-09: this, not the missing retry paint, was the actual flash)": "id=\"chromecap\" style=\"position:fixed;top:0;left:0;right:0;height:env(safe-area-inset-top);background:{{ chromeCap }};z-index:80;pointer-events:none\">",
     "App Lock gate requires everAccessed AND the feature enabled AND not session-unlocked (2026-08-10)": "lockScreenOpen:S.everAccessed&&LK.enabled&&!S.sessionUnlocked,",
@@ -36,6 +36,10 @@
     "Turn off fully clears salt/hash/method back to null, not just enabled:false": "enabled:false,method:null,salt:null,hash:null,iterations:300000,failedAttempts:0,lockoutUntil:0}",
     "App Lock re-locks on visibilitychange and pagehide": "if(document.hidden)this.relock()",
     "brand leads as the name; the wordmark tagline is a plain descriptor, not the pseudo-name \"Bible Mobile Cards\" (App Store collision risk with the existing \"Bible Cards\" app, renamed 2026-08-31)": ";margin-top:10px\">Daily Scripture Cards</div>",
-    "status bar is black-translucent, not the opaque \"default\" style (Phase 1 of the top-of-screen theme-switch flash fix, ported from Memory App 2026-08-31 — an opaque OS status bar is what flashes on the phone)": "apple-mobile-web-app-status-bar-style\" content=\"black-translucent\""
+    "status bar is black-translucent, not the opaque \"default\" style (Phase 1 of the top-of-screen theme-switch flash fix, ported from Memory App 2026-08-31 — an opaque OS status bar is what flashes on the phone)": "apple-mobile-web-app-status-bar-style\" content=\"black-translucent\"",
+    "theming: the dark palette also lives in CSS as :root.dark, not only in pal() JS (Phase 2 flash fix, Memory App model, 2026-08-31)": ":root.dark{--bg:#12141c",
+    "theming: html/body background is var(--bg) so it re-resolves in one paint on the .dark class flip, with no JS <style> rebuild": "html,body{margin:0;padding:0;background:var(--bg,#faf6ee)",
+    "theming: _paintChrome only flips the .dark class + colorScheme (no om-theme-bg textContent rebuild, no theme-color churn, no 200/800ms retries)": "_paintChrome(bb){ const dk=this.isDark(); document.documentElement.classList.toggle('dark',dk);",
+    "theming: #chromecap has a CSS var(--bg) fallback so the safe-area strip is never left unpainted mid-toggle": "#chromecap{background:var(--bg,#faf6ee)}"
   }
 }

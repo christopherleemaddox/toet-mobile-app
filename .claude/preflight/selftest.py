@@ -96,10 +96,11 @@ CASES = [
          t, "this.sharePal().bg:this.pal().bg;",
          "this.sharePal().bg:(this.isDark()?'#12141c':'#faf6ee');")),
      'pal().bg'),
-    ('chromecap top safe-area strip loses its dedicated retry-paint call '
-     '(would let the top status-bar strip flash the wrong color on theme switch, reported by Christopher 2026-08-08)', LIVE,
+    ('_paintChrome stops writing #chromecap altogether (loses the recap/sending '
+     'sharePal tint — the retry churn was removed in Phase 2 2026-08-31, but the '
+     'one chromecap write must stay)', LIVE,
      lambda r: edit_template(r, lambda t: once(
-         t, "const cc=document.getElementById('chromecap');if(cc)cc.style.background=bb;\n", '')),
+         t, " const cc=document.getElementById('chromecap');if(cc)cc.style.background=bb; }", " }")),
      'chromecap'),
     ('theme change reintroduces a full-page location.reload() '
      '(the actual root cause behind every white-flash report today, confirmed via a real button tap with a reload canary)', LIVE,
@@ -150,6 +151,23 @@ CASES = [
          'apple-mobile-web-app-status-bar-style" content="black-translucent"',
          'apple-mobile-web-app-status-bar-style" content="default"')),
      'black-translucent'),
+    ('theming: :root.dark CSS palette block removed (dark theme would fall back to '
+     'the light :root vars — Phase 2 flash fix 2026-08-31)', LIVE,
+     lambda r: edit_template(r, lambda t: once(
+         t, ':root.dark{--bg:#12141c', ':root.xdark{--bg:#12141c')),
+     ':root.dark'),
+    ('theming: html/body background reverted to a hardcoded hex (loses the '
+     'single-paint var(--bg) re-resolve, brings back the flash gap)', LIVE,
+     lambda r: edit_template(r, lambda t: once(
+         t, 'html,body{margin:0;padding:0;background:var(--bg,#faf6ee)',
+         'html,body{margin:0;padding:0;background:#faf6ee')),
+     'var(--bg'),
+    ('theming: _paintChrome churn reinstated (om-theme-bg <style> rebuild + 200/800ms '
+     'retries — the exact mechanism behind the white top-strip gap)', LIVE,
+     lambda r: edit_template(r, lambda t: once(
+         t, "_paintChrome(bb){ const dk=this.isDark(); document.documentElement.classList.toggle('dark',dk);",
+         "_paintChrome(bb){ const dk=this.isDark();")),
+     '_paintchrome only flips'),
 ]
 
 
