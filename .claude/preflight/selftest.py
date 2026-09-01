@@ -108,6 +108,13 @@ CASES = [
          t, "#chromecap{background:#faf6ee}:root.dark #chromecap{background:#12141c}",
          "#chromecap{background:var(--bg,#faf6ee)}")),
      'flat .dark-keyed css rules'),
+    ('<html> inline background no longer synced in savePrefs (freezes at the '
+     "launch-time value -> iOS's standalone status bar stays black in light mode "
+     'after launching in Evening, Phase 6 2026-08-31)', LIVE,
+     lambda r: edit_template(r, lambda t: once(
+         t, "document.documentElement.style.background=nd?'#12141c':'#faf6ee';const cc=document.getElementById('chromecap')",
+         "const cc=document.getElementById('chromecap')")),
+     "<html>'s inline background is kept in sync"),
     ('theme change no longer flips the .dark class synchronously in savePrefs '
      '(class flip falls back to componentDidUpdate = one frame late -> the top '
      'strip holds the previous theme colour for a frame, Phase 3 2026-08-31)', LIVE,
@@ -186,7 +193,7 @@ CASES = [
      lambda r: edit_template(r, lambda t: once(
          t, "_paintChrome(bb){ const dk=this.isDark(); document.documentElement.classList.toggle('dark',dk);",
          "_paintChrome(bb){ const dk=this.isDark();")),
-     '_paintchrome only flips'),
+     '_paintchrome flips the .dark class'),
 ]
 
 

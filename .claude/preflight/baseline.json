@@ -41,7 +41,8 @@
     "theme-color metas are updated synchronously in savePrefs alongside the .dark class flip (nd ? dark : light), via querySelectorAll/forEach so every tag is covered — no media-query pair, no <style> churn (Phase 4, 2026-08-31)": "document.querySelectorAll('meta[name=\"theme-color\"]').forEach(x=>x.setAttribute('content',nd?'#12141c':'#faf6ee'))",
     "theming: the dark palette also lives in CSS as :root.dark, not only in pal() JS (Phase 2 flash fix, Memory App model, 2026-08-31)": ":root.dark{--bg:#12141c",
     "theming: html/body background is var(--bg) so it re-resolves in one paint on the .dark class flip, with no JS <style> rebuild": "html,body{margin:0;padding:0;background:var(--bg,#faf6ee)",
-    "theming: _paintChrome only flips the .dark class + colorScheme (no om-theme-bg textContent rebuild, no theme-color churn, no 200/800ms retries)": "_paintChrome(bb){ const dk=this.isDark(); document.documentElement.classList.toggle('dark',dk);",
+    "theming: _paintChrome flips the .dark class + writes <html> background/colorScheme + one #chromecap write — no om-theme-bg textContent rebuild, no theme-color churn, no 200/800ms retries (Phase 2, extended Phase 6)": "_paintChrome(bb){ const dk=this.isDark(); document.documentElement.classList.toggle('dark',dk);",
+    "<html>'s inline background is kept in sync with the theme in savePrefs (iOS uses <html>'s colour for the standalone status bar; a frozen value = a stuck black status bar in light mode after launching in Evening — directly observed 2026-08-31, Phase 6)": "document.documentElement.style.background=nd?'#12141c':'#faf6ee';const cc=",
     "theming: #chromecap (the safe-area strip) is painted by flat .dark-keyed CSS rules, NOT var(--bg) — the var resolved to the dark value in light mode on Christopher's phone and stayed there (Phase 5, 2026-08-31)": "#chromecap{background:#faf6ee}:root.dark #chromecap{background:#12141c}"
   }
 }

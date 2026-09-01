@@ -526,3 +526,18 @@ Whatever made `var(--bg)` resolve dark for that one element in light mode, none 
 **Verified in-browser both directions:** `#chromecap` inline background is the correct flat hex synchronously on click (cream in light, `#12141c` in dark), computed style matches, no console errors, no visual regression. preflight 54 checks + selftest 26 cases green (Phase 3/4 chromecap + theme-color guards/cases rewritten to the Phase 5 strings; new guard + selftest case that a revert to `var(--bg)` is caught).
 
 **Diagnostic value if this still shows black on Christopher's phone:** it would mean the black band is NOT `#chromecap` (its background is now a flat hex from three paths) — it would have to be the OS drawing its own status bar, and the fix would be to delete `#chromecap` and pad the top content into the safe area the way Memory App does. Committed + pushed to `main`.
+
+### Phase 6 — the real cause: `<html>`'s inline background was frozen at launch-time (2026-08-31)
+
+**Directly observed in-browser** (not inferred): simulate launching the app in Evening, then toggle to Light. `<body>` -> cream, `#chromecap` -> cream (Phase 5 working), but `document.documentElement.style.background` **stays `rgb(18,20,28)` — frozen.**
+
+The load-time inline scripts do `document.documentElement.style.background = c` once, where `c` is the theme colour computed from prefs *at launch*. Nothing ever updates it after — Phase 2 removed the `_paintChrome` line that used to keep it in sync. **iOS uses `<html>`'s colour for a standalone PWA's status bar.** So: launch in Evening -> `<html>` freezes dark -> every switch to Light leaves `<html>` dark -> iOS keeps the status bar black. Persistent, light-mode-only, and it survived all five earlier phases because none of them touched `<html>`'s inline background — `#chromecap`, the status-bar meta, `theme-color`, `var(--bg)` were all red herrings for *this* symptom (though Phases 2-3 were real fixes for the earlier white flash).
+
+**Fix:** keep `<html>`'s inline background in sync with the theme, in the same three places Phases 3-5 already sync the `.dark` class / `theme-color` / `#chromecap`:
+- `savePrefs`: `document.documentElement.style.background=nd?'#12141c':'#faf6ee'` synchronously, before setState
+- `_mqFn`: same for `theme==='auto'` on a system scheme change
+- `_paintChrome`: restored the `document.documentElement.style.background=dk?...` write (covers mount + the visibilitychange re-assert) — this is one write when `bb` changes, not the old churn
+
+**Verified in-browser, the exact failing scenario:** launch seeded to `theme:'dark'`, toggle to Light -> `document.documentElement.style.background` flips to `rgb(250,246,238)` cream **synchronously** on the click; toggle back -> flips to dark synchronously. Both directions. Zero console errors, no visual regression. preflight 55 checks + selftest 27 cases green (new guard + planted-defect case for the `<html>` sync; the Phase 2 `_paintChrome` guard description updated).
+
+**This is the one with a directly-observed root cause and a directly-observed fix**, unlike Phases 1/4/5 which were reasoned. Committed + pushed to `main`. Christopher: delete + re-add the Home Screen icon, then — importantly — test the scenario that was failing: open the app, make sure it's on Evening, then switch to Light and watch the top.
